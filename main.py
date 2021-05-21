@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
-import mytoken as mt
+from mytoken import TOKEN
 import syllables
+import help
 
 bot = commands.Bot(command_prefix="3")
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -13,7 +15,7 @@ async def on_ready():
 async def message(message):
     if message.author == bot.user:
         return
-
+        
     if message.content.startswith('3hello'):
         await message.channel.send('Hello!')
 
@@ -21,4 +23,4 @@ async def message(message):
 async def syl(ctx, *, s="word"):
     await ctx.channel.send("The syllable count for '" + s + "' is " + str(syllables.estimate(s)))
 
-bot.run(mt.TOKEN)
+bot.run(TOKEN)
