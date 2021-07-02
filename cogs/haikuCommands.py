@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import syllables
+import sqlite3
+from funcs import *
 
 
 class haikuCommands(commands.Cog):
@@ -9,25 +11,40 @@ class haikuCommands(commands.Cog):
 
     @commands.command()
     async def syl(self, ctx, *, s="word"):
-        channel = self.bot.get_channel(846889420220792842)
+        channel = self.bot.get_channel(ctx.channel.id)
         await ctx.channel.send("The syllable count for `" + s + "` is " + str(syllables.estimate(s)))
 
     @commands.command()
     async def rules(self, ctx):
+        
+        id = ctx.guild.id
+        conn = sqlite3.connect(f'{id}.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM rules")
+        result = cursor.fetchall()  
+
+        val = ''
+        pos = []
+        rules = []
+
+        for i in result:
+            pos.append(i[0])
+            rules.append(i[1])
+
+        for i in range(len(rules)):
+            val += str(pos[i]) + '.' + str(rules[i]) + '\n'
+
         em = discord.Embed(
-            title = f'{ctx.message.guild.name} aHaiku Game Rules',
+            title = f'{ctx.guild.name} aHaiku Game Rules',
             color = discord.Color.purple()
         )
 
         em.add_field(
-            name="1. The same person can't go twice in a row."
+            name="Rules",
+            value=val
         )
 
-        em.add_field(
-            name="2. The haiku verses should be written on new lines. Check an example to see the format of writing a haiku."
-        )
-
-        channel = self.bot.get_channel(846889420220792842)
+        channel = self.bot.get_channel(ctx.channel.id)
         await ctx.channel.send(embed = em)
 
     @commands.command()
