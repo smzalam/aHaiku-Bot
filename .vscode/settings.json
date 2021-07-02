@@ -1,3 +1,15 @@
 {
-    "python.pythonPath": "C:\\Program Files\\Python39\\python.exe"
+    "python.pythonPath": "C:\\Program Files\\Python39\\python.exe",
+    "[json]": {
+    "breadcrumbs.showEvents": true,
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+    },
+    "python.jediEnabled": true,
+    "python.languageServer": "Jedi",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+    
 }

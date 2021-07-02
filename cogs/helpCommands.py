@@ -31,7 +31,6 @@ class helpCommands(commands.Cog):
             inline = False
         )
 
-        channel = self.bot.get_channel(ctx.channel.id)
         await ctx.channel.send(embed = em)
 
     #moderation settings set channel command

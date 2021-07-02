@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from mytoken import TOKEN
 import syllables
+import cogs.funcs
 
 bot = commands.Bot(command_prefix="3")
 bot.remove_command("help")
