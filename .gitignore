@@ -130,3 +130,5 @@ dmypy.json
 
 # project files
 mytoken.py
+test.py
+*.db
