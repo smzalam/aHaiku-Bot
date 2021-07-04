@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import sqlite3
+from cogs.funcs import setupdb # pylint: disable=E0401
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -33,11 +34,7 @@ class Events(commands.Cog):
                 cursor.execute("INSERT INTO servers VALUES(?, ?)", (id, name))
                 newconn = sqlite3.connect(f"{id}.db")
                 newcursor = newconn.cursor()
-                newcursor.execute("""CREATE TABLE syllablecount (
-                    lineone integer,
-                    linetwo integer,
-                    linethree integer
-                )""")
+                setupdb(newcursor, newconn)
                 print("done")
             elif result is not None:
                 print(result)

@@ -10,7 +10,6 @@ class haikuCommands(commands.Cog):
 
     @commands.command()
     async def syl(self, ctx, *, s="word"):
-        # channel = self.bot.get_channel(ctx.channel.id)
         await ctx.channel.send("The syllable count for `" + s + "` is " + str(syllables.estimate(s)))
 
     @commands.command()
@@ -36,7 +35,6 @@ class haikuCommands(commands.Cog):
             value = val
         )
 
-        # channel = self.bot.get_channel(ctx.channel.id)
         await ctx.channel.send(embed = em)
 
     @commands.command()
