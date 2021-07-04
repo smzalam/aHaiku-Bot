@@ -1,6 +1,8 @@
 from cogs.poems import poemslistissa, poemslistbasho, poemslistbuson # pylint: disable=E0401
 
-#DATABSE FUNCTIONS
+#DATABASE FUNCTIONS
+
+#SETUP FUNCTIONS
 
 #SEARCH COMMANDS FUNCTIONS
 

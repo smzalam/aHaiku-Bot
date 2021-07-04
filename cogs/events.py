@@ -32,6 +32,12 @@ class Events(commands.Cog):
             if result is None:
                 cursor.execute("INSERT INTO servers VALUES(?, ?)", (id, name))
                 newconn = sqlite3.connect(f"{id}.db")
+                newcursor = newconn.cursor()
+                newcursor.execute("""CREATE TABLE syllablecount (
+                    lineone integer,
+                    linetwo integer,
+                    linethree integer
+                )""")
                 print("done")
             elif result is not None:
                 print(result)

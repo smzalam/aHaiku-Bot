@@ -8,12 +8,13 @@ cursor = conn.cursor()
 
 #Create a table
 #only five datatyoes: NULL, INTEGER, REAL, TEXT, BLOB
-cursor.execute("""CREATE TABLE rules (
-    position integer,
-    rule text
+cursor.execute("""CREATE TABLE syllablecount (
+    lineone integer,
+    linetwo integer,
+    linethree integer
 )""")
 
-
+print("committed succesfully you dumdum")
 conn.commit()
 
 conn.close()
