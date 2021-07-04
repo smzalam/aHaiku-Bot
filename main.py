@@ -10,7 +10,8 @@ bot.remove_command("help")
 extensions = ['cogs.helpCommands',
               'cogs.haikuCommands',
               'cogs.searchCommands',
-              'cogs.events']
+              'cogs.events',
+              'cogs.gameCommands']
 
 if __name__ == '__main__':
     for ext in extensions:
