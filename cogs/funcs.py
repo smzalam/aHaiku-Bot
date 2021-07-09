@@ -37,6 +37,9 @@ def setupdb(cursor, conn):
     
 #SEARCH COMMANDS FUNCTIONS
 
+counter = 0
+error404 = ['{"status":404,"reason":"Not found"}']
+
 def haiku(author, poemnum):
     if author == 1:
         poemdraft = poemslistissa[poemnum]
@@ -54,7 +57,7 @@ def haiku(author, poemnum):
         poem = f'{poemdraft1[0]} \n {poemdraft1[1]} \n {poemdraft1[2]}"'
         return poem
 
-def poems():
+# def poems():
     authornum = random.randint(0, len(authors))
     titlenum = random.randint(0, len(titles))
     linecountnum = random.randint(0, len(lcounts))
@@ -78,8 +81,10 @@ def poemsearch(author, title):
             url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/author/" + author
             response = requests.request("GET", url, headers=headers)
             responselst = response.text.split('},')
-            print(1)
-            return responselst[random.randint(0, len(responselst))]
+            if responselst == error404:
+                return "Author not found."
+            else:
+                return responselst[random.randint(0, len(responselst))]
         except:
             return "Author not found."
 
@@ -88,22 +93,27 @@ def poemsearch(author, title):
             url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/title/" + title
             response = requests.request("GET", url, headers=headers)
             responselst = response.text.split('},')
-            print(2)
-            return responselst[random.randint(0, len(responselst))]
+            print(responselst)
+            if responselst == error404:
+                return "Title not found."
+            else:
+                return responselst[random.randint(0, len(responselst))]
         except:
             return "Title not found."
 
     elif author == None and title == None:
-        return "Error."
+        return "Error. Wrong parameters."
 
     elif author != "none" and title != "none":
         try:
             url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/author,title/" + author + ";" + title
             response = requests.request("GET", url, headers=headers)
             responselst = response.text.split('},')
-            print(4)
-            print(len(responselst))
-            return responselst[random.randint(0, len(responselst))]
+            print(responselst)
+            if responselst == error404:
+                return "Author/Title not found."
+            else:
+                return responselst[random.randint(0, len(responselst))]
         except:
             return "Author/Title not found."
 

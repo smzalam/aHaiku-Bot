@@ -14,9 +14,21 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_blue()
         )
 
+        em.set_footer(
+            text = "Contact Nicko#1984 for help/to give suggestions/notification of bugs. Thank you!"
+        )
+        em.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
         em.add_field(
-            name = "Moderation", 
+            name = "Suggestions", 
+            value = "`Contact Nicko#1984 to give suggestions.`",
+            inline = False
+        )
+
+        em.add_field(
+            name = "Game", 
             value = "`3sc`, \n `3ssy`",
+            inline = False
         )
 
         em.add_field(
@@ -41,6 +53,8 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_gold()
         )
 
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
         emc.add_field(
             name = "Description",
             value = "Set and see the channel where the bot plays the haiku game",
@@ -49,16 +63,15 @@ class helpCommands(commands.Cog):
 
         emc.add_field(
             name = "Syntax",
-            value = "`3sc` \n `3sc <channel name>`",
+            value = "`3sc` \n `3sc <channel id> <channel name>`",
             inline = False
         )
 
         emc.add_field(
             name = "Example",
-            value = "`The current channel is set to #haiku-wars.` \n `3sc #haiku-wars`",
+            value = "`The current channel is set to #haiku-wars.` \n `3sc 844963672802459648 #haiku-wars`",
             inline = False
         )
-        channel = self.bot.get_channel(846889420220792842)
         await ctx.channel.send(embed=emc)
 
 
@@ -69,6 +82,8 @@ class helpCommands(commands.Cog):
             title = "3ssy Info", 
             color = discord.Color.dark_gold()
         )
+
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
         emc.add_field(
             name = "Description",
@@ -84,7 +99,7 @@ class helpCommands(commands.Cog):
 
         emc.add_field(
             name = "Example",
-            value = "`5 7 5`, \n `3ssy 5 7 5`",
+            value = "`3ssy 5 7 5`",
             inline = False
         )
 
@@ -99,6 +114,8 @@ class helpCommands(commands.Cog):
             title = "3rules Info", 
             color = discord.Color.dark_magenta()
         )
+
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
         emc.add_field(
             name = "Description", 
@@ -130,6 +147,8 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
         emc.add_field(
             name = "Description", 
             value = "Add a game rule", 
@@ -138,13 +157,13 @@ class helpCommands(commands.Cog):
 
         emc.add_field(
             name = "Syntax", 
-            value = '`3arules <position of game rule> <" game rule ">`', 
+            value = '`3arules <position of game rule> <game rule>`', 
             inline=False
         )
 
         emc.add_field(
             name = "Example", 
-            value = '`3arules 3 "One person cant go twice in a row"`, \n  `3arules 5 "Each succesful written haiku is one point"`', 
+            value = '`3arules 3 One person cant go twice in a row`, \n  `3arules 5 Each succesful written haiku is one point`', 
             inline=False
         )
 
@@ -159,6 +178,8 @@ class helpCommands(commands.Cog):
             title = "3rules Info", 
             color = discord.Color.dark_magenta()
         )
+
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
         emc.add_field(
             name = "Description", 
@@ -190,6 +211,8 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
         emc.add_field(
             name = "Description", 
             value = "Get a haiku example", 
@@ -204,7 +227,7 @@ class helpCommands(commands.Cog):
 
         emc.add_field(
             name = "Example", 
-            value = "`Example Haiku \n \n The sunset draws close, \n as the weather blooms, the bright \n orange leaves flutter down`", 
+            value = "`3example`", 
             inline=True
         )
 
@@ -220,21 +243,27 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+        emc.set_footer(
+            text = "[] = optional, <> = required"
+        )
+
         emc.add_field(
             name = "Description", 
-            value = "Search haiku online by title or author", 
+            value = "Search poems online by title or author", 
             inline=False
         )
 
         emc.add_field(
             name = "Syntax",
-            value = "`3search <'title of haiku'> ['name of author']`, \n `3search ['title of haiku'] <'name of author'>`, \n `3search <'title of haiku'> <'name of author'>`",
+            value = "`3search [name of author] <title of haiku>`, \n `3search <name of author> [title of haiku]`, \n `3search <title of haiku> <name of author>`",
             inline = False
         )
 
         emc.add_field(
             name = "Example", 
-            value = "`3search 'The Spring'`, \n `3search 'Matsuo Kinsaku'`, \n `3search 'This Autumn' 'Matsuo Kinsaku'`", 
+            value = "`3search Shakespeare none`, \n `3search none Summer`, \n `3search Shakespeare Summer`", 
             inline=True
         )
 

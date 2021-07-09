@@ -5,7 +5,7 @@ import requests
 from discord.embeds import Embed
 from discord.ext import commands
 
-from cogs.funcs import haiku, poems, poemsearch, authors, titles, lcounts  # pylint: disable=E0401
+from cogs.funcs import haiku, poemsearch, authors, titles, lcounts  # pylint: disable=E0401
 
 
 class searchCommands(commands.Cog):
