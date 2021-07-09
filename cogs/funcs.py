@@ -28,6 +28,10 @@ def setupdb(cursor, conn):
         linethree integer
     )""")
 
+    cursor.execute("""CREATE TABLE haikustreak (
+        streak integer
+    )""")
+
     cursor.execute("INSERT INTO rules(position, rule) VALUES (?, ?)", (1, "The same person can't go twice in a row."))
     cursor.execute("INSERT INTO rules(position, rule) VALUES (?, ?)", (2, "The haiku verses should be written on new lines. Check an example to see the format of writing a haiku."))
     cursor.execute("INSERT INTO syllablecount(lineone, linetwo, linethree) VALUES (?, ?, ?)", (5, 7, 5))
