@@ -130,6 +130,8 @@ dmypy.json
 
 # project files
 mytoken.py
-C:\Users\shifa\Desktop\Me\Programming\Discord Bots\Haiku\test.py
+test.py
+db.py
+cogs/db.py
 *.db
 ahaiku.db
