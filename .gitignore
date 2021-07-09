@@ -135,3 +135,4 @@ db.py
 cogs/db.py
 *.db
 ahaiku.db
+.vscode
