@@ -1,4 +1,4 @@
 discord
 syllables   
-mytoken
+mytoken.py
 cogs
