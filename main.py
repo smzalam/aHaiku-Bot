@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from mytoken import TOKEN
+import os
 import syllables
 import cogs.funcs
 
@@ -17,4 +17,4 @@ if __name__ == '__main__':
     for ext in extensions:
         bot.load_extension(ext)
 
-bot.run(TOKEN)
+bot.run(os.environ['DISCORD_TOKEN'])
