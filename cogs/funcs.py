@@ -1,10 +1,13 @@
-from site import execusercustomize
+import random
+from urllib import response
 
-from cogs.poems import (poemslistbasho,  # pylint: disable=E0401
-                        poemslistbuson, poemslistissa)
+import requests
+
+from cogs.poems import poemslistbasho  # pylint: disable=E0401
+from cogs.poems import authors, lcounts, poemslistbuson, poemslistissa, titles # pylint: disable=E0401
+
 
 #DATABASE FUNCTIONS
-
 #SETUP FUNCTIONS
 def setupdb(cursor, conn):
 
@@ -50,6 +53,59 @@ def haiku(author, poemnum):
         poemdraft1 = poemdraft.split("\\n")
         poem = f'{poemdraft1[0]} \n {poemdraft1[1]} \n {poemdraft1[2]}"'
         return poem
+
+def poems():
+    authornum = random.randint(0, len(authors))
+    titlenum = random.randint(0, len(titles))
+    linecountnum = random.randint(0, len(lcounts))
+
+    author = authors[authornum]
+    title = titles[titlenum]
+    linecount = lcounts[linecountnum]
+
+    return author, title, linecount
+
+def poemsearch(author, title):
+    headers = {
+        'x-rapidapi-key': "948df7f86cmshc48caac45c16ba3p125b6cjsnfb525f1303f3",
+        'x-rapidapi-host': "thundercomb-poetry-db-v1.p.rapidapi.com"
+    }
+
+    url = "https://thundercomb-poetry-db-v1.p.rapidapi.com/"
+
+    if author != "none" and title == "none":
+        try:
+            url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/author/" + author
+            response = requests.request("GET", url, headers=headers)
+            responselst = response.text.split('},')
+            print(1)
+            return responselst[random.randint(0, len(responselst))]
+        except:
+            return "Author not found."
+
+    elif author == "none" and title != "none":
+        try:
+            url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/title/" + title
+            response = requests.request("GET", url, headers=headers)
+            responselst = response.text.split('},')
+            print(2)
+            return responselst[random.randint(0, len(responselst))]
+        except:
+            return "Title not found."
+
+    elif author == None and title == None:
+        return "Error."
+
+    elif author != "none" and title != "none":
+        try:
+            url =  "https://thundercomb-poetry-db-v1.p.rapidapi.com/author,title/" + author + ";" + title
+            response = requests.request("GET", url, headers=headers)
+            responselst = response.text.split('},')
+            print(4)
+            print(len(responselst))
+            return responselst[random.randint(0, len(responselst))]
+        except:
+            return "Author/Title not found."
 
 #HAIKU COMMANDS FUNCTIONS
 

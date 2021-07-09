@@ -17,7 +17,6 @@ class Events(commands.Cog):
             return
 
         if message.content.startswith('3hello'):
-            channel = self.bot.get_channel(846889420220792842)
             await message.channel.send('Hello!')
 
     @commands.Cog.listener()

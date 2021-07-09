@@ -43,7 +43,7 @@ class haikuCommands(commands.Cog):
         id = ctx.guild.id
         conn = sqlite3.connect(f'{id}.db')
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO rules(position, rules) VALUES(?, ?)", (pos, rule))
+        cursor.execute("INSERT INTO rules(position, rule) VALUES(?, ?)", (pos, rule))
 
         cursor.execute("SELECT * FROM rules")
         result = cursor.fetchall()  
@@ -77,7 +77,7 @@ class haikuCommands(commands.Cog):
         id = ctx.guild.id
         conn = sqlite3.connect(f'{id}.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT position, rules FROM rules WHERE position = ?", (pos))
+        cursor.execute("SELECT position, rule FROM rules WHERE position = ?", (pos))
         deleted = cursor.fetchone()
         cursor.execute("DELETE FROM rules WHERE position = ?", (pos))
 
