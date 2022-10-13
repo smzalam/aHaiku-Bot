@@ -1,97 +1,85 @@
-import sqlite3
-
-import discord
-import syllables
+import discord, json, syllables
 from discord import channel, guild
 from discord.ext import commands
-
+from sqlalchemy import select, and_, insert, update, delete
+from sqlalchemy.orm import Session
+from cogs.database import models, database
+from cogs.database import database_operations as dbops
+from pprint import pprint
 import cogs.funcs as funcs  # pylint: disable=E0401
-
 
 class gameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.db = dbops.DatabaseOperations()
 
     @commands.command()
-    async def sc(self, ctx, channelid=0, channelname=""):
-        conn = sqlite3.connect(f'{ctx.guild.id}.db')
-        cursor = conn.cursor()
-
-        if channelname != "" and channelid != 0:
-            cursor.execute("DELETE FROM gamechannel")
-            cursor.execute("INSERT INTO gamechannel VALUES(?, ?, ?)", (ctx.guild.id, channelid, channelname))
-            cursor.execute("SELECT channelname FROM gamechannel")
-            conn.commit()
-            channel = str(cursor.fetchone()).strip('(,)')
-            await ctx.channel.send(f"Game channel has been set to {channel}")    
-        elif channelname == "" and channelid == 0:
-            cursor.execute("SELECT channelname FROM gamechannel")
-            result = str(cursor.fetchone()).strip('(,)')
-            if result is None:  
+    async def sc(self, ctx, operation, channelid=0, channelname=""):
+        
+        if operation == "--set" and channelname != "" and channelid != 0:
+            if self.db.select_server(ctx.guild.id, 'channel_name') is None:
+            # self.db.execute(select(models.ServerStats.channel_name).where(models.ServerStats.server_id == ctx.guild.id)).scalar() is None:
+                self.db.insert_server(ctx.guild.id, ctx.guild.name, channelid, channelname)
+                # self.db.execute(insert(models.ServerStats).values(server_id = ctx.guild.id, server_name = ctx.guild.name, channel_id = channelid, channel_name=channelname, streak = 0))
+            else:
+                result = self.db.update_channel(ctx.guild.id, channeid, channelname)
+                # self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == ctx.guild.id).values(channel_id = channelid, channel_name=channelname))
+            # stmt_select = select(models.ServerStats.channel_name).where(models.ServerStats.server_id == ctx.guild.id)
+            # channel = self.db.execute(stmt_select).scalar()
+            channel = self.db.select_server(ctx.guild.id, 'channel_name')
+            await ctx.channel.send(f"Game channel has been set to {channel}!")
+        elif operation == "--current" and channelname == "" and channelid == 0:
+            # stmt_select = select(models.ServerStats.channel_name).where(models.ServerStats.server_id == ctx.guild.id)
+            # channel = self.db.execute(stmt_select).scalar() 
+            channel = self.db.select_server(ctx.guild.id, 'channel_name')   
+            if channel is None:  
                 await ctx.channel.send(f"Channel hasn't been set yet. See 3help_3sc to see how to set a channel.")
-            elif result is not None:
-                await ctx.channel.send(f"Channel is set to {result}")
-        elif (channelid != "" and channelname == 0) or (channelid == "" and channelname != 0):
-            await ctx.channel.send("Missing a parameter. Make sure to include both the channel id and the channel name. For more information, type 3help_3sc")
+            elif channel is not None:
+                await ctx.channel.send(f"Channel is set to {channel}.")
+        elif ((channelname != "" and operation != "-current") and channelid == 0) or (channelname == "" and channelid != 0):
+            await ctx.channel.send("Wrong command. For more information, type 3help_3sc")
 
     @commands.command()
-    async def ssy(self, ctx, s1 = 0, s2 = 0, s3 = 0):
-        conn = sqlite3.connect(f'{ctx.guild.id}.db')
-        cursor = conn.cursor()
-        if s1 != 0 and s2 != 0 and s3 != 0:
-            cursor.execute("DELETE FROM syllablecount")
-            cursor.execute("INSERT INTO syllablecount VALUES(?, ?, ?)", (s1, s2, s3))
-            cursor.execute("SELECT * FROM syllablecount")
-            conn.commit()
-            syllables = str(cursor.fetchone()).strip('(,)')
-            await ctx.channel.send(f"Game syllable count has been set to {syllables}")    
-        elif s1 == 0 and s2 == 0 and s3 == 0:
-            cursor.execute("SELECT * FROM syllablecount")
-            syllables = str(cursor.fetchone()).strip('(,)')
-            await ctx.channel.send(f"Game syllable count is set to {syllables}")
+    async def ssy(self, ctx, operation, s1 = 0, s2 = 0, s3 = 0): 
+        if operation == "-set" and s1 != 0 and s2 != 0 and s3 != 0:
+            stmt_update = update(models.Syllables).where(models.Syllables.server_id == ctx.guild.id).values(line_one = s1, line_two = s2, line_three = s3)
+            result = self.db.execute(stmt_update)
+            stmt_select = select(models.Syllables).where(models.Syllables.server_id == ctx.guild.id)
+            channel = self.db.execute(stmt_select).scalars().fetchall()    
+            await ctx.channel.send(f"Game syllable count has been set to {channel}")
+        elif operation == "-current" and s1 == 0 and s2 == 0 and s3 == 0:
+            stmt_select = select(models.Syllables).where(models.Syllables.server_id == ctx.guild.id)
+            channel = self.db.execute(stmt_select).scalars().fetchall()    
+            await ctx.channel.send(f"Game syllable count has been set to {channel}")
+        else:
+            await ctx.channel.send("Incorrect command. For more information, type 3help_3ssy.")
 
     @commands.Cog.listener('on_message')
     async def message(self, message):
         if message.author == self.bot.user:
             return
 
-        conn = sqlite3.connect(f'{message.guild.id}.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT channelid FROM gamechannel")
-        gamechannel = int(str(cursor.fetchone()).strip('(,)'))
-        
-        if message.channel.id != gamechannel:
-            return "Error"
-        elif message.channel.id == gamechannel:
-            
+        stmt = select(models.ServerStats.channel_id).where(models.ServerStats.server_id == message.guild.id)
+        channel_id = self.db.execute(stmt).scalar() 
+        if message.channel.id != channel_id and message.content[0] != "3":
+             await message.channel.send("Wrong channel. Go to the set haiku channel to play the game.")
+        else:            
             # author = message.author
 
             haiku = message.content.split("/")
+            stmt_select = select(and_(models.Syllables.line_one, models.Syllables.line_two, models.Syllables.line_three)).where(models.Syllables.server_id == message.guild.id)
+            channel = self.db.execute(stmt_select).scalars().fetchall() 
 
-            scount = []
             for i in range(len(haiku)):
-                scount.append(syllables.estimate(haiku[i]))
-            scount = str(scount)[1:-1]
+                if syllables.estimate(haiku[i]) == channel[i]:
+                    continue
+                else:
+                    self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == message.guild.id).values(streak = 0))
+                    await message.channel.send(f"Streak broken! Line {i} had {syllables.estimate(haiku[i])} syllables instead of {channel[i]} syllables.")
 
-            cursor.execute("SELECT * FROM syllablecount")
-            syllable = str(cursor.fetchone()).strip('(,)')
+            self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == message.guild.id).values(streak = models.ServerStats.streak + 1))
+            await message.add_reaction("✅")      
 
-            if scount == syllable:
-                print(funcs.counter)
-                funcs.counter += 1
-                print(funcs.counter)
-                print(type(funcs.counter))
-                cursor.execute("DELETE FROM haikustreak")
-                cursor.execute("INSERT INTO haikustreak(streak) VALUES (?)", (funcs.counter,))
-                conn.commit()
-                await message.add_reaction("✅")      
-            else:
-                cursor.execute("SELECT * from haikustreak")
-                streak = str(cursor.fetchone()).strip('(,)')
-                print(streak)
-                cursor.execute("DELETE FROM haikustreak")
-                conn.commit()
-                await message.channel.send(f"Not correct syllables. Streak lost! The highest streak was {streak}")
 
-def setup(bot):
-    bot.add_cog(gameCommands(bot))
+async def setup(bot):
+    await bot.add_cog(gameCommands(bot))

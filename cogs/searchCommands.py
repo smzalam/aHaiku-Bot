@@ -1,5 +1,4 @@
 import random
-
 import discord
 import requests
 from discord.embeds import Embed
@@ -58,5 +57,5 @@ class searchCommands(commands.Cog):
         else:
             await ctx.channel.send(response)
 
-def setup(bot):
-    bot.add_cog(searchCommands(bot))
+async def setup(bot):
+    await bot.add_cog(searchCommands(bot))

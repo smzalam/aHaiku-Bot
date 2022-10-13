@@ -1,12 +1,16 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
 class helpCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("Bot Is Online")
+
     #master help command
-    @commands.command(invoke_wihoutcommand=True)
+    @commands.command()
     async def help(self, ctx):
         em = discord.Embed(
             title = "aHaiku Bot Commands", 
@@ -17,29 +21,29 @@ class helpCommands(commands.Cog):
         em.set_footer(
             text = "Contact Nicko#1984 for help/to give suggestions/notification of bugs. Thank you!"
         )
-        em.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        em.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         em.add_field(
             name = "Suggestions", 
-            value = "`Contact Nicko#1984 to give suggestions.`",
+            value = "`Contact sy#6720 to give suggestions.`",
             inline = False
         )
 
         em.add_field(
-            name = "Game", 
-            value = "`3sc`, \n `3ssy`",
+            name = "Game Settings", 
+            value = "`3sc (set_channel)`, \n `3ssy (set_syllable_count)`",
             inline = False
         )
 
         em.add_field(
-            name = "Haikus", 
+            name = "Game Rules", 
             value = "`3rules`, \n `3arules`, \n `3rrules`", 
             inline = False
         )
 
         em.add_field(   
-            name = "Search", 
-            value = "`3example`, \n `3search`", 
+            name = "Haiku Search", 
+            value = "`3example`, \n `3search (for specific haiku/poem)`", 
             inline = False
         )
 
@@ -53,7 +57,7 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_gold()
         )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         emc.add_field(
             name = "Description",
@@ -83,7 +87,7 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_gold()
         )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         emc.add_field(
             name = "Description",
@@ -115,7 +119,7 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         emc.add_field(
             name = "Description", 
@@ -138,69 +142,69 @@ class helpCommands(commands.Cog):
         channel = self.bot.get_channel(846889420220792842)
         await ctx.channel.send(embed=emc)
 
-    #haiku add rules command
-    @commands.command(invoke_wihoutcommand=True)
-    async def help_3arules(self, ctx):
+    # #haiku add rules command
+    # @commands.command(invoke_wihoutcommand=True)
+    # async def help_3arules(self, ctx):
 
-        emc = discord.Embed(
-            title = "3arules Info", 
-            color = discord.Color.dark_magenta()
-        )
+    #     emc = discord.Embed(
+    #         title = "3arules Info", 
+    #         color = discord.Color.dark_magenta()
+    #     )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    #     emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
-        emc.add_field(
-            name = "Description", 
-            value = "Add a game rule", 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Description", 
+    #         value = "Add a game rule", 
+    #         inline=False
+    #     )
 
-        emc.add_field(
-            name = "Syntax", 
-            value = '`3arules <position of game rule> <game rule>`', 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Syntax", 
+    #         value = '`3arules <position of game rule> <game rule>`', 
+    #         inline=False
+    #     )
 
-        emc.add_field(
-            name = "Example", 
-            value = '`3arules 3 One person cant go twice in a row`, \n  `3arules 5 Each succesful written haiku is one point`', 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Example", 
+    #         value = '`3arules 3 One person cant go twice in a row`, \n  `3arules 5 Each succesful written haiku is one point`', 
+    #         inline=False
+    #     )
 
-        channel = self.bot.get_channel(846889420220792842)
-        await ctx.channel.send(embed=emc)
+    #     channel = self.bot.get_channel(846889420220792842)
+    #     await ctx.channel.send(embed=emc)
 
-    #haiku see rules command
-    @commands.command(invoke_wihoutcommand=True)
-    async def help_3rrules(self, ctx):
+    # #haiku see rules command
+    # @commands.command(invoke_wihoutcommand=True)
+    # async def help_3rrules(self, ctx):
 
-        emc = discord.Embed(
-            title = "3rules Info", 
-            color = discord.Color.dark_magenta()
-        )
+    #     emc = discord.Embed(
+    #         title = "3rules Info", 
+    #         color = discord.Color.dark_magenta()
+    #     )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    #     emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
-        emc.add_field(
-            name = "Description", 
-            value = "Remove a game rule", 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Description", 
+    #         value = "Remove a game rule", 
+    #         inline=False
+    #     )
 
-        emc.add_field(
-            name = "Syntax", 
-            value = '`3rules <position of game rule>`', 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Syntax", 
+    #         value = '`3rules <position of game rule>`', 
+    #         inline=False
+    #     )
 
-        emc.add_field(
-            name = "Example", 
-            value = '`3rrules 3`, \n  `3rrules 1`', 
-            inline=False
-        )
+    #     emc.add_field(
+    #         name = "Example", 
+    #         value = '`3rrules 3`, \n  `3rrules 1`', 
+    #         inline=False
+    #     )
 
-        channel = self.bot.get_channel(846889420220792842)
-        await ctx.channel.send(embed=emc)
+    #     channel = self.bot.get_channel(846889420220792842)
+    #     await ctx.channel.send(embed=emc)
 
     #search searching haiku examples help command
     @commands.command(invoke_wihoutcommand=True)
@@ -211,7 +215,7 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         emc.add_field(
             name = "Description", 
@@ -243,7 +247,7 @@ class helpCommands(commands.Cog):
             color = discord.Color.dark_magenta()
         )
 
-        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        emc.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
 
         emc.set_footer(
             text = "[] = optional, <> = required"
@@ -270,5 +274,5 @@ class helpCommands(commands.Cog):
         channel = self.bot.get_channel(846889420220792842)
         await ctx.channel.send(embed=emc)
 
-def setup(bot):
-    bot.add_cog(helpCommands(bot))
+async def setup(bot):
+    await bot.add_cog(helpCommands(bot))

@@ -1,12 +1,15 @@
-import discord
+import discord, json, syllables
 from discord.ext import commands
-import syllables
-import sqlite3
+from sqlalchemy import select, and_, insert
+from sqlalchemy.orm import Session
+from cogs.database import models, database
+from pprint import pprint
 from cogs.funcs import getting_pos, getting_rules, writing_rules # pylint: disable=E0401
 
 class haikuCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.db = database.SessionLocal()
 
     @commands.command()
     async def syl(self, ctx, *, s="word"):
@@ -16,6 +19,11 @@ class haikuCommands(commands.Cog):
     async def rules(self, ctx):
         
         id = ctx.guild.id
+
+        stmt = select(models.Rules)
+        result = self.db.execute(stmt)
+        
+
         conn = sqlite3.connect(f'{id}.db')
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM rules")
@@ -107,5 +115,5 @@ class haikuCommands(commands.Cog):
         conn.close()
         await ctx.channel.send(embed = em)
 
-def setup(bot):
-    bot.add_cog(haikuCommands(bot))
+async def setup(bot):
+    await bot.add_cog(haikuCommands(bot))

@@ -6,39 +6,6 @@ import requests
 from cogs.poems import poemslistbasho  # pylint: disable=E0401
 from cogs.poems import authors, lcounts, poemslistbuson, poemslistissa, titles # pylint: disable=E0401
 
-
-#DATABASE FUNCTIONS
-#SETUP FUNCTIONS
-def setupdb(cursor, conn):
-
-    cursor.execute("""CREATE TABLE rules (
-        position integer,
-        rule text
-    )""")
-
-    cursor.execute("""CREATE TABLE gamechannel (
-        serverid integer,
-        channelid integer,
-        channelname text
-    )""")
-
-    cursor.execute("""CREATE TABLE syllablecount (
-        lineone integer,
-        linetwo integer,
-        linethree integer
-    )""")
-
-    cursor.execute("""CREATE TABLE haikustreak (
-        streak integer
-    )""")
-
-    cursor.execute("INSERT INTO rules(position, rule) VALUES (?, ?)", (1, "The same person can't go twice in a row."))
-    cursor.execute("INSERT INTO rules(position, rule) VALUES (?, ?)", (2, "The haiku verses should be written on new lines. Check an example to see the format of writing a haiku."))
-    cursor.execute("INSERT INTO syllablecount(lineone, linetwo, linethree) VALUES (?, ?, ?)", (5, 7, 5))
-
-    conn.commit()
-    conn.close()
-    
 #SEARCH COMMANDS FUNCTIONS
 
 counter = 0
@@ -74,7 +41,7 @@ def haiku(author, poemnum):
 
 def poemsearch(author, title):
     headers = {
-        'x-rapidapi-key': "948df7f86cmshc48caac45c16ba3p125b6cjsnfb525f1303f3",
+        'x-rapidapi-key': "e897edce51msh5e6201e36f8b427p144d41jsnea04e68ce1a5",
         'x-rapidapi-host': "thundercomb-poetry-db-v1.p.rapidapi.com"
     }
 
@@ -145,3 +112,10 @@ def writing_rules(pos, rules):
         val += "`" + str(pos[i]) + '. ' + str(rules[i]) + "`" + '\n'
 
     return val
+
+def db_clean(response):
+    result = []
+    for row in response.scalars():
+        row_dict = row.__dict__
+        result.append(row_dict.pop('_sa_instance_state', None).dict)
+    return result
