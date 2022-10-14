@@ -22,7 +22,8 @@ extensions = ['cogs.helpCommands',
               'cogs.haikuCommands',
               'cogs.searchCommands',
               'cogs.events',
-              'cogs.gameCommands']
+              'cogs.gameCommands',
+              'cogs.adminCommands']
 
 async def load_extensions():
     for ext in extensions:
