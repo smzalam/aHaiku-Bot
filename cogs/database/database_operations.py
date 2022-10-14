@@ -68,7 +68,7 @@ class DatabaseOperations:
 
     def update_syllables(self, guild_id, one, two, three):
         try: 
-            server_stats = self.db.execute(update(models.Syllables).where(models.Syllables.server_id == guild_id).values(line_one = one, line_two = two, line_three = thr))
+            server_stats = self.db.execute(update(models.Syllables).where(models.Syllables.server_id == guild_id).values(line_one = one, line_two = two, line_three = three))
             self.db.commit()
             return True
         except exc.SQLAlchemyError as e:

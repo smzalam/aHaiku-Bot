@@ -21,15 +21,9 @@ class gameCommands(commands.Cog):
             msg = await self.bot.wait_for('message')
             if msg.content == 'y':
                 result = self.db.update_channel(ctx.guild.id, channelid, channelname)
-            # self.db.execute(insert(models.ServerStats).values(server_id = ctx.guild.id, server_name = ctx.guild.name, channel_id = channelid, channel_name=channelname, streak = 0))
-            # self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == ctx.guild.id).values(channel_id = channelid, channel_name=channelname))
-            # stmt_select = select(models.ServerStats.channel_name).where(models.ServerStats.server_id == ctx.guild.id)
-            # channel = self.db.execute(stmt_select).scalar()
             channel = self.db.select_server(ctx.guild.id, 'channel_name')
             await ctx.channel.send(f"Game channel has been set to {channel}!")
         elif operation == "--current" and channelname == "" and channelid == 0:
-            # stmt_select = select(models.ServerStats.channel_name).where(models.ServerStats.server_id == ctx.guild.id)
-            # channel = self.db.execute(stmt_select).scalar() 
             channel = self.db.select_server(ctx.guild.id, 'channel_name')   
             if channel is None:  
                 await ctx.channel.send(f"Channel hasn't been set yet. See 3help_3sc to see how to set a channel.")
@@ -42,49 +36,89 @@ class gameCommands(commands.Cog):
     async def ssy(self, ctx, operation, s1 = 0, s2 = 0, s3 = 0): 
         if operation == "--set" and s1 != 0 and s2 != 0 and s3 != 0:
             self.db.update_syllables(ctx.guild.id, s1, s2, s3)
-            # stmt_update = update(models.Syllables).where(models.Syllables.server_id == ctx.guild.id).values(line_one = s1, line_two = s2, line_three = s3)
-            # result = self.db.execute(stmt_update)
-            # stmt_select = select(models.Syllables).where(models.Syllables.server_id == ctx.guild.id)
-            # channel = self.db.execute(stmt_select).scalars().fetchall()    
             channel = self.db.select_syllables(ctx.guild.id)
-            await ctx.channel.send(f"Game syllable count has been set to {channel}")
+            await ctx.channel.send(f"Game syllable count has been set to {channel['line_one']}-{channel['line_two']}-{channel['line_three']}")
         elif operation == "--current" and s1 == 0 and s2 == 0 and s3 == 0:
             self.db.select_syllables(ctx.guild.id)
-            # stmt_select = select(models.Syllables).where(models.Syllables.server_id == ctx.guild.id)
-            # channel = self.db.execute(stmt_select).scalars().fetchall()    
             channel = self.db.select_syllables(ctx.guild.id)
-            await ctx.channel.send(f"Game syllable count has been set to {channel}")
+            await ctx.channel.send(f"Game syllable count is {channel['line_one']}-{channel['line_two']}-{channel['line_three']}")
         else:
             await ctx.channel.send("Incorrect command. For more information, type 3help_3ssy.")
+
+    @commands.command()
+    async def streak(self, ctx):
+        current_streak = self.db.select_server(ctx.guild.id, 'streak')
+        server_name = self.db.select_server(ctx.guild.id, 'server_name')
+        await ctx.channel.send(f"Current streak for `{server_name}`: `{current_streak}`")
 
     @commands.Cog.listener('on_message')
     async def message(self, message):
         if message.author == self.bot.user:
             return
 
-        # stmt = select(models.ServerStats.channel_id).where(models.ServerStats.server_id == message.guild.id)
         channel_id = self.db.select_server(message.guild.id, 'channel_id')
-        if message.channel.id != channel_id:
+        x = str(message.channel.id)
+        if x != channel_id or message.content.startswith("3"):
              return
         else:            
-            # author = message.author
             haiku = message.content.split("/")
-            # stmt_select = select(and_(models.Syllables.line_one, models.Syllables.line_two, models.Syllables.line_three)).where(models.Syllables.server_id == message.guild.id)
-            # channel = self.db.execute(stmt_select).scalars().fetchall() 
-            pattern = self.db.select_syllables(message.guild.id)
+            query = self.db.select_syllables(message.guild.id)
+            pattern = [query['line_one'], query['line_two'], query['line_three']]
 
-            for i in range(len(haiku)):
-                if syllables.estimate(haiku[i]) == pattern[i]:
-                    continue
-                else:
-                    # self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == message.guild.id).values(streak = 0))
+            for i in range(len(pattern)):
+                try:
+                    if syllables.estimate(haiku[i]) == pattern[i] and i == 2:
+                        self.db.update_streak(message.guild.id, models.ServerStats.streak + 1)
+                        await message.add_reaction('✅')  
+                    elif syllables.estimate(haiku[i]) == pattern[i]:
+                        continue
+                    else:
+                        await message.add_reaction('❌')    
+                        streak = self.db.select_server(message.guild.id, 'streak')
+                        self.db.update_streak(message.guild.id, 0)
+                        await message.channel.send(f"Streak broken at `{streak}`! Line {i+1} had {syllables.estimate(haiku[i])} syllables instead of {pattern[i]} syllables.")
+                        break
+                except IndexError:
+                    await message.add_reaction('❌')    
+                    streak = self.db.select_server(message.guild.id, 'streak')
                     self.db.update_streak(message.guild.id, 0)
-                    await message.channel.send(f"Streak broken! Line {i} had {syllables.estimate(haiku[i])} syllables instead of {channel[i]} syllables.")
+                    await message.channel.send(f"Streak broken at `{streak}`! Complete haiku not written.")
+                    break
 
-            # self.db.execute(update(models.ServerStats).where(models.ServerStats.server_id == message.guild.id).values(streak = models.ServerStats.streak + 1))
-            self.db.update_streak(message.guild.id, models.ServerStats.streak + 1)
-            await message.add_reaction("✅")      
+    @commands.command()
+    async def syl(self, ctx, *, s="word"):
+        await ctx.channel.send("The syllable count for `" + s + "` is " + str(syllables.estimate(s)))
 
+    @commands.command()
+    async def rules(self, ctx):
+        
+        id = ctx.guild.id
 
+        stmt = select(models.Rules)
+        result = self.db.execute(stmt)
+        
+
+        conn = sqlite3.connect(f'{id}.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM rules")
+        result = cursor.fetchall()  
+
+        pos = getting_pos(result)
+        rules = getting_rules(result)
+        val = writing_rules(pos, rules)
+
+        em = discord.Embed(
+            title = f'{ctx.guild.name} aHaiku Game Rules',
+            color = discord.Color.purple()
+        )
+
+        em.add_field(
+            name = "Rules",
+            value = val
+        )
+
+        await ctx.channel.send(embed = em)
+
+        
 async def setup(bot):
     await bot.add_cog(gameCommands(bot))

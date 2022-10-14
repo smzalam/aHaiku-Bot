@@ -19,7 +19,7 @@ discord.utils.setup_logging(handler=handler)
 models.Base.metadata.create_all(bind=engine)
 
 extensions = ['cogs.helpCommands',
-              'cogs.haikuCommands',
+              'cogs.poemCommands',
               'cogs.searchCommands',
               'cogs.events',
               'cogs.gameCommands',
